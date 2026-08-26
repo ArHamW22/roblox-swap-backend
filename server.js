@@ -2,25 +2,28 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 
-// Memory cache to hold active server tracking data
-let activeHandshakes = {};
+// Stores the last triggered job ID at the root level
+let globalTargetJobId = "NONE";
+let globalToken = "NONE";
 
-// Main game server hits this endpoint to post a tracking token
-app.post('/sync', (req, res) => {
+// Main game posts straight to the root domain
+app.post('/', (req, res) => {
     const { targetJobId, token } = req.body;
     if (targetJobId && token) {
-        activeHandshakes[targetJobId] = token;
+        globalTargetJobId = targetJobId;
+        globalToken = token;
         return res.status(200).json({ success: true });
     }
     return res.status(400).json({ error: "Missing data fields" });
 });
 
-// Alt account loops this endpoint to verify state matches
-app.get('/check/:jobId', (req, res) => {
-    const jobId = req.params.jobId;
-    const token = activeHandshakes[jobId] || "NONE";
-    return res.status(200).json({ token: token });
+// Alt account reads straight from the root domain
+app.get('/', (req, res) => {
+    return res.status(200).json({ 
+        targetJobId: globalTargetJobId, 
+        token: globalToken 
+    });
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Matrix Web Pipeline running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Matrix Web Pipeline active on port ${PORT}`));
