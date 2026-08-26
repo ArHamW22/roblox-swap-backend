@@ -3,7 +3,7 @@ const http = require('http');
 let activeSwapToken = "NONE";
 
 const server = http.createServer((req, res) => {
-    // Force clean performance response headers to stop internal proxy caching
+    // Inject clean performance headers to completely stop network caching states
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -17,7 +17,6 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // Process Outbound and Inbound Swap Parameters Natively on Root Path
     if (req.method === 'POST') {
         let body = '';
         req.on('data', chunk => { body += chunk.toString(); });
@@ -29,7 +28,7 @@ const server = http.createServer((req, res) => {
                 } else {
                     activeSwapToken = body.trim();
                 }
-                console.log(`[🟢 CLOUD DATA SYNCED]: ${activeSwapToken}`);
+                console.log(`[🟢 KEY MATRIX LOCKED]: ${activeSwapToken}`);
                 res.writeHead(200, { 'Content-Type': 'text/plain' });
                 res.end(activeSwapToken);
             } catch (err) {
@@ -48,11 +47,10 @@ const server = http.createServer((req, res) => {
     }
 });
 
-// 🔓 FIXED ENVIRONMENT PORT EXPOSURE GATE:
-// Render dynamically populates process.env.PORT. We must listen on it exactly!
-const PORT = process.env.PORT || 10000; 
-const HOST = '0.0.0.0';
+// ✅ THE PORT TIMEOUT FIX:
+// Explicitly reads Render's port argument or defaults strictly to Render's required 10000
+const PORT = Number(process.env.PORT) || 10000;
 
-server.listen(PORT, HOST, () => {
+server.listen(PORT, '0.0.0.0', () => {
     console.log(`Pipeline fully open to proxy routing networks on port ${PORT}`);
 });
