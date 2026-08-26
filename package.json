@@ -1,13 +1,8 @@
 {
-  "name": "roblox-swap-backend",
+  "name": "sabs-handshake-matrix",
   "version": "1.0.0",
-  "description": "Ultra-low latency data handshake server for Roblox slot swaps",
   "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "engines": {
-    "node": ">=18.0.0 <23.0.0"
-  },
-  "dependencies": {}
+  "dependencies": {
+    "express": "^4.19.2"
+  }
 }
