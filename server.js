@@ -17,27 +17,34 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // ✅ FIXED CORE ROOT DATABANK:
-    // Process every single network operation directly on your root home domain path
+    // Process Incoming Data Actions
     if (req.method === 'POST') {
         let body = '';
         req.on('data', chunk => { body += chunk.toString(); });
         req.on('end', () => {
-            activeSwapToken = body.trim();
-            console.log(`[🟢 CLOUD KEY REGISTERED]: ${activeSwapToken}`);
-            res.writeHead(200, { 'Content-Type': 'text/plain' });
-            res.end(activeSwapToken);
+            try {
+                // Read both raw text or JSON packets perfectly
+                if (body.startsWith('{')) {
+                    const data = JSON.parse(body);
+                    activeSwapToken = data.token || "NONE";
+                } else {
+                    activeSwapToken = body.trim();
+                }
+                console.log(`[🟢 KEY MATRIX LOCKED]: ${activeSwapToken}`);
+                res.writeHead(200, { 'Content-Type': 'text/plain' });
+                res.end(activeSwapToken);
+            } catch (err) {
+                activeSwapToken = body.trim();
+                res.writeHead(200, { 'Content-Type': 'text/plain' });
+                res.end(activeSwapToken);
+            }
         });
     } else if (req.method === 'GET') {
-        // Automatically checks if a manual reset request has been issued
-        const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
-        const setParam = parsedUrl.searchParams.get('set');
-        
-        if (setParam) {
-            activeSwapToken = setParam;
-            console.log(`[🔄 MANUAL CLOUD RESET]: ${activeSwapToken}`);
+        // Fallback clear handler checking inside raw query extensions
+        if (req.url.includes('set=NONE') || req.url.includes('clear')) {
+            activeSwapToken = "NONE";
+            console.log(`[🔄 CLOUD SYSTEM RESET] Database wiped to NONE`);
         }
-        
         res.writeHead(200, { 'Content-Type': 'text/plain' });
         res.end(activeSwapToken);
     }
@@ -45,5 +52,5 @@ const server = http.createServer((req, res) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`Root alignment database matrix active on port ${PORT}`);
+    console.log(`Unified pipeline online on port ${PORT}`);
 });
