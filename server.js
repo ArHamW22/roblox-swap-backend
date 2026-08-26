@@ -3,7 +3,7 @@ const http = require('http');
 let activeSwapToken = "NONE";
 
 const server = http.createServer((req, res) => {
-    // Inject clean performance headers to completely stop network caching states
+    // Force clean performance response headers to stop internal proxy caching
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -29,7 +29,7 @@ const server = http.createServer((req, res) => {
                 } else {
                     activeSwapToken = body.trim();
                 }
-                console.log(`[🟢 KEY MATRIX LOCKED]: ${activeSwapToken}`);
+                console.log(`[🟢 CLOUD DATA SYNCED]: ${activeSwapToken}`);
                 res.writeHead(200, { 'Content-Type': 'text/plain' });
                 res.end(activeSwapToken);
             } catch (err) {
@@ -48,10 +48,11 @@ const server = http.createServer((req, res) => {
     }
 });
 
-// ✅ FIXED COMPILER ROUTING HOOKS
-const PORT = process.env.PORT || 3000;
-const HOST = '0.0.0.0'; // 👈 Forces the server to listen globally on Render's network card
+// 🔓 FIXED ENVIRONMENT PORT EXPOSURE GATE:
+// Render dynamically populates process.env.PORT. We must listen on it exactly!
+const PORT = process.env.PORT || 10000; 
+const HOST = '0.0.0.0';
 
 server.listen(PORT, HOST, () => {
-    console.log(`Root alignment network matrix active on http://${HOST}:${PORT}`);
+    console.log(`Pipeline fully open to proxy routing networks on port ${PORT}`);
 });
