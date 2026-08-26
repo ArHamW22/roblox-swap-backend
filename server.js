@@ -3,7 +3,7 @@ const http = require('http');
 let activeSwapToken = "NONE";
 
 const server = http.createServer((req, res) => {
-    // Inject performance response headers to bypass internal caches
+    // Inject clean performance headers to completely stop network caching states
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -11,36 +11,39 @@ const server = http.createServer((req, res) => {
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
 
-    // Handle preflight OPTIONS requests smoothly
     if (req.method === 'OPTIONS') {
         res.writeHead(200);
         res.end();
         return;
     }
 
-    // Process endpoints safely
-    if (req.url.startsWith('/swap')) {
-        if (req.method === 'POST') {
-            let body = '';
-            req.on('data', chunk => { body += chunk.toString(); });
-            req.on('end', () => {
-                activeSwapToken = body.trim();
-                console.log(`[🟢 ACTIVE TOKEN REGISTERED]: ${activeSwapToken}`);
-                res.writeHead(200, { 'Content-Type': 'text/plain' });
-                res.end('TOKEN_SAVED');
-            });
-        } else if (req.method === 'GET') {
+    // ✅ FIXED CORE ROOT DATABANK:
+    // Process every single network operation directly on your root home domain path
+    if (req.method === 'POST') {
+        let body = '';
+        req.on('data', chunk => { body += chunk.toString(); });
+        req.on('end', () => {
+            activeSwapToken = body.trim();
+            console.log(`[🟢 CLOUD KEY REGISTERED]: ${activeSwapToken}`);
             res.writeHead(200, { 'Content-Type': 'text/plain' });
             res.end(activeSwapToken);
+        });
+    } else if (req.method === 'GET') {
+        // Automatically checks if a manual reset request has been issued
+        const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
+        const setParam = parsedUrl.searchParams.get('set');
+        
+        if (setParam) {
+            activeSwapToken = setParam;
+            console.log(`[🔄 MANUAL CLOUD RESET]: ${activeSwapToken}`);
         }
-    } else {
-        // Fallback root path validation checks
+        
         res.writeHead(200, { 'Content-Type': 'text/plain' });
-        res.end(`Server is running! Current Active Slot Token: ${activeSwapToken}`);
+        res.end(activeSwapToken);
     }
 });
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`Data sync pool operational on port ${PORT}`);
+    console.log(`Root alignment database matrix active on port ${PORT}`);
 });
