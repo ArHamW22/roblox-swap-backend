@@ -17,13 +17,12 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // Process Incoming Data Actions
+    // Process Outbound and Inbound Swap Parameters Natively on Root Path
     if (req.method === 'POST') {
         let body = '';
         req.on('data', chunk => { body += chunk.toString(); });
         req.on('end', () => {
             try {
-                // Read both raw text or JSON packets perfectly
                 if (body.startsWith('{')) {
                     const data = JSON.parse(body);
                     activeSwapToken = data.token || "NONE";
@@ -40,7 +39,6 @@ const server = http.createServer((req, res) => {
             }
         });
     } else if (req.method === 'GET') {
-        // Fallback clear handler checking inside raw query extensions
         if (req.url.includes('set=NONE') || req.url.includes('clear')) {
             activeSwapToken = "NONE";
             console.log(`[🔄 CLOUD SYSTEM RESET] Database wiped to NONE`);
@@ -50,7 +48,10 @@ const server = http.createServer((req, res) => {
     }
 });
 
+// ✅ FIXED COMPILER ROUTING HOOKS
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-    console.log(`Unified pipeline online on port ${PORT}`);
+const HOST = '0.0.0.0'; // 👈 Forces the server to listen globally on Render's network card
+
+server.listen(PORT, HOST, () => {
+    console.log(`Root alignment network matrix active on http://${HOST}:${PORT}`);
 });
