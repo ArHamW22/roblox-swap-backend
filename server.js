@@ -5,6 +5,7 @@ app.use(express.json());
 let globalTargetJobId = "NONE";
 let globalToken       = "NONE";
 let globalPlayerName  = "NONE";
+let globalJoined      = false;
 let rejoinData = { altRejoin: false, rejoinJobId: "NONE" };
 
 // main game posts swap signal
@@ -14,6 +15,7 @@ app.post('/', (req, res) => {
         globalTargetJobId = targetJobId;
         globalToken       = token;
         globalPlayerName  = playerName || "NONE";
+        globalJoined      = false;
         rejoinData        = { altRejoin: false, rejoinJobId: "NONE" };
         return res.status(200).json({ success: true });
     }
@@ -25,7 +27,8 @@ app.get('/', (req, res) => {
     return res.status(200).json({
         targetJobId: globalTargetJobId,
         token:       globalToken,
-        playerName:  globalPlayerName
+        playerName:  globalPlayerName,
+        joined:      globalJoined
     });
 });
 
@@ -33,7 +36,8 @@ app.get('/', (req, res) => {
 app.post('/rejoin', (req, res) => {
     const { altRejoin, rejoinJobId } = req.body;
     if (typeof altRejoin === 'boolean' && rejoinJobId) {
-        rejoinData = { altRejoin, rejoinJobId };
+        rejoinData   = { altRejoin, rejoinJobId };
+        if (altRejoin === true) globalJoined = true;
         return res.status(200).json({ success: true });
     }
     return res.status(400).json({ error: "Missing data fields" });
@@ -41,7 +45,7 @@ app.post('/rejoin', (req, res) => {
 
 // joiner account polls this
 app.get('/rejoin', (req, res) => {
-    return res.status(200).json(rejoinData);
+    return res.status(200).json({ ...rejoinData, joined: globalJoined });
 });
 
 const PORT = process.env.PORT || 3000;
