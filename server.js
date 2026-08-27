@@ -4,15 +4,16 @@ app.use(express.json());
 
 let globalTargetJobId = "NONE";
 let globalToken       = "NONE";
-
+let globalPlayerName  = "NONE";
 let rejoinData = { altRejoin: false, rejoinJobId: "NONE" };
 
 // main game posts swap signal
 app.post('/', (req, res) => {
-    const { targetJobId, token } = req.body;
+    const { targetJobId, token, playerName } = req.body;
     if (targetJobId && token) {
         globalTargetJobId = targetJobId;
         globalToken       = token;
+        globalPlayerName  = playerName || "NONE";
         rejoinData        = { altRejoin: false, rejoinJobId: "NONE" };
         return res.status(200).json({ success: true });
     }
@@ -23,7 +24,8 @@ app.post('/', (req, res) => {
 app.get('/', (req, res) => {
     return res.status(200).json({
         targetJobId: globalTargetJobId,
-        token:       globalToken
+        token:       globalToken,
+        playerName:  globalPlayerName
     });
 });
 
